@@ -1,0 +1,30 @@
+{
+  "name": "thethingstest",
+  "version": "1.0.0",
+  "description": "Desarrolla un servidor API REST utilizando solo JavaScript (sin TypeScript) y Express que permita realizar operaciones de escritura y lectura sobre un archivo de usuarios. Cada registro del archivo de usuarios debe tener un formato \"APELLIDOS, NOMBRE\". El servidor debe ser capaz de manejar archivos de gran volumen con millones de registros sin saturar el rendimiento del servidor. Además, el servidor API REST debe estar dockerizado con un límite de memoria de 1GB para garantizar la eficiencia y el rendimiento. Se requiere el uso de documentación JSDoc para documentar el código.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adriagc8/TheThingsTest.git"
+  },
+  "keywords": [
+    "API",
+    "REST",
+    "docker",
+    "express"
+  ],
+  "author": "Adriagc8",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adriagc8/TheThingsTest/issues"
+  },
+  "homepage": "https://github.com/Adriagc8/TheThingsTest#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-validator": "^7.0.1",
+    "fs": "^0.0.1-security"
+  }
+}
