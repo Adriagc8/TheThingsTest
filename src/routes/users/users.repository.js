@@ -1,4 +1,5 @@
 const fs = require('node:fs/promises');
+const { filterObjects } = require('../../utils/filter');
 
 exports.appendUser = async (user) => {
     try {
@@ -12,23 +13,12 @@ exports.appendUser = async (user) => {
     }
   };
 
-exports.findUsers = async (filterName, filterSurnames) => {
+exports.findUsers = async ( name, surnames ) => {
     let users = await readUsers();
-    if(filterName || filterSurnames) {
-        users = users.filter((user) => {
-        if(filterName && filterSurnames) {
-            return (user.name === filterName && user.surnames === filterSurnames);
-        }
-        if(filterName) {
-            return user.name === filterName;
-        }
-        if(filterSurnames) {
-            return user.surnames === filterSurnames;
-        }
-        return false;
-        });
-    }
-    return users;
+    const filter = {};
+    if(name) filter.name = name;
+    if(surnames) filter.surnames = surnames;
+    return filterObjects(users, filter);
 }
 const readUsers = async () => {
     try {
