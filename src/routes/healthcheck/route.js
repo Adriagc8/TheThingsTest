@@ -1,6 +1,6 @@
 const { Router } = require("../../utils/express");
 
-const controller = require("./route.controller");
+const controller = require("./healthcheck.controller");
 
 const router = new Router();
 

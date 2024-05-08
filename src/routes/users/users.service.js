@@ -1,4 +1,4 @@
-const { appendUser, findUsers } = require('./route.repository');
+const { appendUser, findUsers } = require('./users.repository');
 
 exports.createUser = async (name, surnames) => {
   try {

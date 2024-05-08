@@ -1,4 +1,4 @@
-const { getHealthcheck } = require("./route.service");
+const { getHealthcheck } = require("./healthcheck.service");
 
 const controller = {
   async get({ res }) {

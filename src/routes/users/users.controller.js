@@ -1,4 +1,4 @@
-const { createUser, getUsers } = require('./route.service');
+const { createUser, getUsers } = require('./users.service');
 
 const controller = {
   async post({ req, res }) {

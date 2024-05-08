@@ -1,7 +1,7 @@
 const { Router } = require("../../utils/express");
 
-const validation = require("./route.validation");
-const controller = require("./route.controller");
+const validation = require("./users.validation");
+const controller = require("./users.controller");
 
 const router = new Router();
 
