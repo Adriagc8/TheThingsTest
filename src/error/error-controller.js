@@ -1,7 +1,18 @@
+/**
+ * Module for handling application errors.
+ * @module error.controller
+ * @requires ./app-error
+ * @requires ../utils/express
+ */
 const AppError = require("./app-error");
-
 const { createErrorMiddleware } = require("../utils/express");
-
+/**
+ * The controller function for handling application errors.
+ * @param {Object} options - The options for the controller.
+ * @param {Error} options.err - The error object.
+ * @param {Object} options.res - The response object.
+ * @returns {Promise<void>}
+ */
 function errorController({ err, res }) {
   console.error(err);
   if (err instanceof AppError) {
@@ -15,7 +26,11 @@ function errorController({ err, res }) {
     message: "Internal server error",
   });
 }
-
+/**
+ * Gets the HTTP status code for an application error.
+ * @param {AppError} appError - The application error.
+ * @returns {Number} The HTTP status code.
+ */
 function getStatus(appError) {
   switch (appError.type) {
     case AppError.type.notAuthenticated:
