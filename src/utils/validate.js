@@ -1,4 +1,4 @@
-const { validationResult, body: _body, param: _param, query: _query } = require("express-validator");
+const { validationResult, body, param, query } = require("express-validator");
 
 
 function validate(validations) {
@@ -18,17 +18,5 @@ function validate(validations) {
     res.status(400).json({ errors: errors.array() });
   };
 };
-
-function body(...args) {
-  return _body(...args);
-}
-
-function param(...args) {
-  return _param(...args);
-}
-
-function query(...args) {
-  return _query(...args);
-}
 
 module.exports = { validate, body, param, query };
