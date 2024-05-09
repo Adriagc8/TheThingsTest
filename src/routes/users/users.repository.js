@@ -1,32 +1,41 @@
-const fs = require('node:fs/promises');
-const { filterObjects } = require('../../utils/filter');
+const fs = require("node:fs/promises");
+const { filterObjects } = require("../../utils/filter");
+const AppError = require("../../error/app-error");
 
 exports.appendUser = async (user) => {
-    try {
-        const users = await readUsers();
-        users.push(user);
-        await fs.writeFile('users.json', JSON.stringify(users));
-        return user;
-    } catch (error) {
-        console.log(error);
-        throw new Error(error);
-    }
-  };
+  const users = await readUsers();
+  try {
+    users.push(user);
+    await fs.writeFile("users.json", JSON.stringify(users));
+    return user;
+  } catch (error) {
+    throw new AppError({
+      type: AppError.type.internalServerError,
+      message: "Append User failed",
+    });
+  }
+};
 
-exports.findUsers = async ( name, surnames ) => {
-    let users = await readUsers();
-    const filter = {};
-    if(name) filter.name = name;
-    if(surnames) filter.surnames = surnames;
+exports.findUsers = async (filter) => {
+  let users = await readUsers();
+  try {
     return filterObjects(users, filter);
-}
+  } catch (error) {
+    throw new AppError({
+      type: AppError.type.internalServerError,
+      message: "Find users failed",
+    });
+  }
+};
 const readUsers = async () => {
-    try {
-      const file = await fs.readFile('users.json');
-      const users = JSON.parse(file);
-      return users;
-    } catch (error) {
-      console.log(error);
-      throw new Error(error);
-    }
+  try {
+    const file = await fs.readFile("users.json");
+    const users = JSON.parse(file);
+    return users;
+  } catch (error) {
+    throw new AppError({
+      type: AppError.type.internalServerError,
+      message: "Read users failed",
+    });
+  }
 };

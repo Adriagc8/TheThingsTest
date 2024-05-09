@@ -1,23 +1,16 @@
-const { appendUser, findUsers } = require('./users.repository');
+const { appendUser, findUsers } = require("./users.repository");
 
 exports.createUser = async (name, surnames) => {
-  try {
-    const user = { 
-      name, 
-      surnames 
-    }
-    return await appendUser(user);
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
+  const user = {
+    name,
+    surnames,
+  };
+  return await appendUser(user);
 };
 
-exports.getUsers = async (filterName, filterSurnames) => {
-  try {
-    return await findUsers(filterName, filterSurnames);
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
+exports.getUsers = async (name, surnames) => {
+  const filter = {};
+  if (name) filter.name = name;
+  if (surnames) filter.surnames = surnames;
+  return await findUsers(filter);
 };
