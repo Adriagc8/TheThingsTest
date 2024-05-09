@@ -39,3 +39,15 @@ const readUsers = async () => {
     });
   }
 };
+exports.clearUsers = async () => {
+  try {
+    await fs.writeFile("users.json","[]");
+    const users = await readUsers();
+    return users;
+  } catch (error) {
+    throw new AppError({
+      type: AppError.type.internalServerError,
+      message: "Clear users failed",
+    });
+  }
+};
