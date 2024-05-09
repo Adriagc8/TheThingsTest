@@ -32,4 +32,13 @@ function createMiddleware(callback) {
   };
 }
 
-module.exports = { Router, createMiddleware };
+function createErrorMiddleware(callback) {
+  return async (err, req, res, next) => {
+    try {
+      await callback({ err, req, res, next });
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+module.exports = { Router, createMiddleware, createErrorMiddleware };
