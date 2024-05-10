@@ -1,3 +1,7 @@
+**Usage**
+docker build . -t {your_docker_username}/the-things-io
+docker run -e PRIVATE_KEY={your_private_key} -m 1g -p {your_port}:3141 -d {your_docker_username}/the-things-io
+
 **Prueba Técnica: Desarrollo de Servidor API REST Dockerizado con Express**
 
 Descripción del Proyecto:
