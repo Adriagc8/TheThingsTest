@@ -15,12 +15,25 @@ const filePath = "users.json";
  * @returns {Promise<Object>} The appended user.
  */
 exports.appendUser = async (user) => {
-  const users = await readUsers();
   try {
-    users.push(user);
-    await fs.writeFile(filePath, JSON.stringify(users));
+    const partitionId = await lastPartitionId();
+    if(await partitionSize(partitionId) > 536870912){
+      const id = partitionId + 1;
+      const file = {
+        id,
+        users: [user],
+      }
+      await fs.writeFile(`users${id}.json`, JSON.stringify(file));
+      const partitions = await getPartitions();
+      partitions.ids.push(id)
+      await fs.writeFile(`partitions.json`, JSON.stringify(partitions));
+    } else {
+      const data = await readPartition(partitionId);
+      data.users.push(user);
+      await fs.writeFile(`users${partitionId}.json`, JSON.stringify(data));
+    }
     return user;
-  } catch (error) {
+  }catch (error) {
     throw new AppError({
       type: AppError.type.internalServerError,
       message: "Append User failed",
@@ -33,15 +46,20 @@ exports.appendUser = async (user) => {
  * @returns {Promise<Array<Object>>} The found users.
  */
 exports.findUsers = async (filter) => {
-  let users = await readUsers();
-  try {
-    return filterObjects(users, filter);
-  } catch (error) {
-    throw new AppError({
-      type: AppError.type.internalServerError,
-      message: "Find users failed",
-    });
+  const partitionId = await lastPartitionId();
+  const usersFiltered =[]
+  for(i=0; i<=partitionId; i++){
+    let data = await readPartition(i);
+    try {
+      usersFiltered.push(...filterObjects(data.users, filter));
+    } catch (error) {
+      throw new AppError({
+        type: AppError.type.internalServerError,
+        message: "Find users failed",
+      });
+    }
   }
+  return usersFiltered;
 };
 /**
  * Clears the users.json file.
@@ -68,6 +86,49 @@ const readUsers = async () => {
     const file = await fs.readFile(filePath);
     const users = JSON.parse(file);
     return users;
+  } catch (error) {
+    throw new AppError({
+      type: AppError.type.internalServerError,
+      message: "Read users failed",
+    });
+  }
+};
+/**
+ * Get the size of a partition file.
+ * @param {number} partitionId - The ID of the partition.
+ * @returns {Promise<number>} - The size of the partition file in bytes.
+ */
+const partitionSize = async (partitionId) => {
+  const stats = await fs.stat(`users${partitionId}.json`);
+  return stats.size;
+}
+/**
+ * Get the list of partitions.
+ * @returns {Promise<Object[]>} - The list of partitions.
+ */
+const getPartitions = async () => {
+  const partitionsFile = await fs.readFile("partitions.json");
+  return JSON.parse(partitionsFile);
+}
+/**
+ * Get the ID of the last partition.
+ * @returns {Promise<number>} - The ID of the last partition.
+ */
+const lastPartitionId = async () => {
+  const partitions = await getPartitions();
+  return partitions.ids[ partitions.ids.length - 1];
+}
+/**
+ * Read the data from a partition.
+ * @param {number} partitionId - The ID of the partition.
+ * @returns {Promise<Object[]>} - The data from the partition.
+ * @throws {AppError} - If there is an error reading the partition.
+ */
+const readPartition = async (partitionId) => {
+  try {
+    const file = await fs.readFile(`users${partitionId}.json`);
+    const data = JSON.parse(file);
+    return data;
   } catch (error) {
     throw new AppError({
       type: AppError.type.internalServerError,
